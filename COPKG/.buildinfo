@@ -1,0 +1,47 @@
+#product-info  {
+    product-name: "mpir";
+    version: "2.4.0";
+    original-source-location: "http://www.mpir.org/mpir-2.4.0.tar.bz2";
+    original-source-website: "http://www.mpir.org/";
+    license: "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007";
+    packager: "Jonny Best <mail@jonathanbest.de>";
+}
+
+/* 
+* IMPORTANT:
+* mpir doesn't like to build more than one project at a time. 
+* Be careful when adding more targets, since ptk will probably try to build them all!
+* 
+* There are two resons for this:
+* 1. each project requires generating a file called config.h,
+*    which contains important constants
+* 2. each project tries to write into either the folder "/dll" or "/lib". 
+*    And other linkers will try to find the binaries there.
+*/
+lib_mpir_gc {
+    compiler: vc10-x86;
+ 
+    targets: { 
+        // libraries
+        "build.vc10\dll\Win32\mpir.dll",
+        "build.vc10\dll\Win32\mpir.lib",
+
+        // API and symbols
+        "build.vc10\dll\Win32\mpir.exp",
+        "build.vc10\dll\Win32\mpir.pdb",
+        "build.vc10\dll\Win32\config.h",
+        "build.vc10\dll\Win32\gmp.h",
+        "build.vc10\dll\Win32\mpir.h",
+        "build.vc10\dll\Win32\gmp-mparam.h",
+        "build.vc10\dll\Win32\gmpxx.h",
+        "build.vc10\dll\Win32\mpirxx.h"
+} ;
+            // a comma seperated list of the binary files that are output             
+ 
+    build-command: "devenv /build release /project dll_mpir_gc /projectconfig \"release|Win32\" build.vc10\mpir.sln";
+            // you cannot build more than one config at one time, since config.h is generated
+            // for each config
+ 
+    clean-command: "devenv /clean release /project dll_mpir_gc /projectconfig \"release|Win32\" build.vc10\mpir.sln";
+            // does not yet clean everything! 
+}
