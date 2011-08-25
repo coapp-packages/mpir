@@ -13,10 +13,10 @@
 * Be careful when adding more targets, since ptk will probably try to build them all!
 * 
 * There are two resons for this:
-* 1. each project requires generating a file called config.h,
-*    which contains important constants
-* 2. each project tries to write into either the folder "/dll" or "/lib". 
-*    And other linkers will try to find the binaries there.
+* 1. each project requires generating a file called config.h in the same location
+* 2. each project tries to write into either the shared folders "/dll" or "/lib". 
+*    (Other linkers will try to find the binaries there. Changing it means breaking
+*     other solutions like speed.sln.)
 */
 lib_mpir_gc {
     compiler: vc10-x86;
