@@ -3,6 +3,7 @@
     version: "2.4.0";
     original-source-location: "http://www.mpir.org/mpir-2.4.0.tar.bz2";
     original-source-website: "http://www.mpir.org/";
+    original-source-repository: "http://boxen.math.washington.edu/svn/mpir/mpir/trunk/";
     license: "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007";
     packager: "Jonny Best <mail@jonathanbest.de>";
 }
