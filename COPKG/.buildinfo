@@ -38,10 +38,26 @@ lib_mpir_gc {
 } ;
             // a comma seperated list of the binary files that are output             
  
-    build-command: "devenv /build release /project dll_mpir_gc /projectconfig \"release|Win32\" build.vc10\mpir.sln";
+    build-command: @"devenv /build release /project dll_mpir_gc build.vc10\mpir.sln";
             // you cannot build more than one config at one time, since config.h is generated
             // for each config
  
-    clean-command: "devenv /clean release /project dll_mpir_gc /projectconfig \"release|Win32\" build.vc10\mpir.sln";
-            // does not yet clean everything! 
+    clean-command: @"
+            devenv /clean release /project dll_mpir_gc build.vc10\mpir.sln
+            
+            attrib -S -H -R *
+            
+            del /S *.user *.suo *.sdf
+                        
+            del config.h 2>NUL 
+            del gmp-mparam.h 2>NUL 
+            del longlong.h 2>NUL 
+            del mpir.h 2>NUL
+            
+            rmdir /S /Q build.vc10\dll 2>NUL 
+            rmdir /S /Q build.vc10\Win32 2>NUL 
+            rmdir /S /Q build.vc10\dll_mpir_gc\Win32\ 2>NUL 
+            rm build.vc10\mpir-tests\test-config.props 2>NUL 
+            rm build.vc10\output_params.bat 2>NUL                         
+    "; 
 }
