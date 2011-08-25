@@ -23,18 +23,18 @@ lib_mpir_gc {
  
     targets: { 
         // libraries
-        "build.vc10\dll\Win32\mpir.dll",
-        "build.vc10\dll\Win32\mpir.lib",
+        "build.vc10\dll\Win32\Release\mpir.dll",
+        "build.vc10\dll\Win32\Release\mpir.lib",
 
         // API and symbols
-        "build.vc10\dll\Win32\mpir.exp",
-        "build.vc10\dll\Win32\mpir.pdb",
-        "build.vc10\dll\Win32\config.h",
-        "build.vc10\dll\Win32\gmp.h",
-        "build.vc10\dll\Win32\mpir.h",
-        "build.vc10\dll\Win32\gmp-mparam.h",
-        "build.vc10\dll\Win32\gmpxx.h",
-        "build.vc10\dll\Win32\mpirxx.h"
+        "build.vc10\dll\Win32\Release\mpir.exp",
+        "build.vc10\dll\Win32\Release\mpir.pdb",
+        "build.vc10\dll\Win32\Release\config.h",
+        "build.vc10\dll\Win32\Release\gmp.h",
+        "build.vc10\dll\Win32\Release\mpir.h",
+        "build.vc10\dll\Win32\Release\gmp-mparam.h",
+        "build.vc10\dll\Win32\Release\gmpxx.h",
+        "build.vc10\dll\Win32\Release\mpirxx.h"
 } ;
             // a comma seperated list of the binary files that are output             
  
