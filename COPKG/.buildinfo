@@ -58,7 +58,7 @@ lib_mpir_gc {
             rmdir /S /Q build.vc10\dll 2>NUL 
             rmdir /S /Q build.vc10\Win32 2>NUL 
             rmdir /S /Q build.vc10\dll_mpir_gc\Win32\ 2>NUL 
-            rm build.vc10\mpir-tests\test-config.props 2>NUL 
-            rm build.vc10\output_params.bat 2>NUL                         
+            del build.vc10\mpir-tests\test-config.props 2>NUL 
+            del build.vc10\output_params.bat 2>NUL
     "; 
 }
