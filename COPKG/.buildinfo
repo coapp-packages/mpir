@@ -19,8 +19,10 @@
 *    (Other linkers will try to find the binaries there. Changing it means breaking
 *     other solutions like speed.sln.)
 */
-lib_mpir_gc {
-    compiler: vc10-x86;
+
+// this will actually create both dll and lib
+dll_mpir_gc {
+    compiler: sdk7.1;
  
     targets: { 
         // libraries
@@ -39,12 +41,12 @@ lib_mpir_gc {
 } ;
             // a comma seperated list of the binary files that are output             
  
-    build-command: @"devenv /build release /project dll_mpir_gc build.vc10\mpir.sln";
+    build-command: @"msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=Win32;Configuration=Release";
             // you cannot build more than one config at one time, since config.h is generated
             // for each config
  
     clean-command: @"
-            devenv /clean release /project dll_mpir_gc build.vc10\mpir.sln
+            msbuild build.vc10\mpir.sln /t:dll_mpir_gc:Clean; /p:Platform=Win32;Configuration=Release
             
             attrib -S -H -R *
             
