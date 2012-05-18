@@ -1,0 +1,68 @@
+@import "version.inc";
+@import "compat.inc";
+@import "outercurve.inc";
+
+#define { 
+    flavor: "${comp??vc10}"; 
+    arch : "${plat??x86}";
+}
+
+package {
+    name: "mpir[${flavor}]";
+    version: "${package-version}";
+    arch : "${arch}";
+
+    display-name: "MPIR";
+    location: "http://coapp.org/repository/${OutputFilename}";
+
+    feed: "http://coapp.org/repository/packages.atom.xml";
+    publisher: "CoApp Project";
+}
+
+license[LGPL3] {
+	license: @"..\COPYING.LIB";
+    license-url: "http://www.gnu.org/licenses/lgpl.html";
+    license-type: "LGPL3";
+}
+
+metadata {  
+    summary: "Multiple Precision Integers and Rationals";
+    description: @"MPIR is a big integer/rational math library and a compatible replacement for libgmp.";
+    author-version : "${author-version}";
+    bug-tracker: "https://github.com/coapp-packages/mpir/issues";
+    stability : "0";
+    licenses : {
+        LGPL3
+    };
+}
+
+signing {
+    attributes : {
+        company="Outercurve Foundation",
+        description="MPIR is a big integer/rational math library and a compatible replacement for libgmp.",
+        product-name="Multiple Precision Integers and Rationals",
+        product-version="${package-version}",
+        file-version="${package-version}",
+    };
+
+    replace-signature: true; 
+    include: { 
+        dlls
+    };    
+}
+
+assembly[mpir[${flavor}]] {
+    include : {
+        dlls
+    };
+}
+
+files[dlls] {
+    root: @"..\build.vc10\dll\Win32\Release";
+
+    include: {
+        "mpir.dll",
+    };
+
+    trim-path: all;
+};

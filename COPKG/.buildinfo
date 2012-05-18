@@ -1,6 +1,8 @@
+@import "version.inc";
+
 #product-info  {
     product-name: "mpir";
-    version: "2.4.0";
+    version: "${package-version}";
     original-source-location: "http://www.mpir.org/mpir-2.4.0.tar.bz2";
     original-source-website: "http://www.mpir.org/";
     original-source-repository: "http://boxen.math.washington.edu/svn/mpir/mpir/trunk/";
@@ -67,4 +69,29 @@ dll_mpir_gc {
             del build.vc10\mpir-tests\test-config.props 2>NUL 
             del build.vc10\output_params.bat 2>NUL
     "; 
+}
+
+release {
+	uses: dll_mpir_gc;
+}
+
+test {
+}
+
+package {
+	uses: release;
+
+	build-command: @"
+        cd COPKG
+        autopackage mpir.autopkg || goto failed
+	";
+
+	targets: {
+		@"COPKG\mpir[vc10]-${package-version}-x86.msi",
+	};
+
+	clean-command: @"
+		del COPKG\*.msi
+		del COPKG\*.wixpdb
+	";
 }
