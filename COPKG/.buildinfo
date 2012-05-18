@@ -41,7 +41,11 @@ dll_mpir_gc {
 } ;
             // a comma seperated list of the binary files that are output             
  
-    build-command: @"msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=Win32;Configuration=Release";
+    build-command: @"
+		if ""${BUILT}"" equ ""true"" goto end
+		msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=Win32;Configuration=Release
+:end
+		";
             // you cannot build more than one config at one time, since config.h is generated
             // for each config
  
