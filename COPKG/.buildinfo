@@ -83,10 +83,13 @@ package {
 
 	build-command: @"
         cd COPKG
-        autopackage mpir.autopkg || goto failed
+        autopackage mpir-dev-common.autopkg || goto failed
+        autopackage mpir.autopkg mpir-dev.autopkg || goto failed
 	";
 
 	targets: {
+		@"COPKG\mpir-dev-common-${package-version}-any.msi",
+		@"COPKG\mpir-dev[vc10]-${package-version}-x86.msi",
 		@"COPKG\mpir[vc10]-${package-version}-x86.msi",
 	};
 
