@@ -39,13 +39,9 @@ developer-library[mpir] {
 }
 
 files[headers] {
-    root: @"..\build.vc10\dll\Win32\Release";
+    root: @"..\output\include\";
     include: {
-        "mpir.h",
-		"gmp.h",
-		"gmp-mparam.h",
-		"gmpxx.h",
-		"mpirxx.h",
+        "*.h",
     };
 
     trim-path:minimal;

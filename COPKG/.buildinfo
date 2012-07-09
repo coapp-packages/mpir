@@ -7,7 +7,7 @@
 
 #product-info  {
     product-name: "mpir";
-    version: "${package-version}";
+    version: "${NewVersion}";
     original-source-location: "http://www.mpir.org/mpir-2.4.0.tar.bz2";
     original-source-website: "http://www.mpir.org/";
     original-source-repository: "http://boxen.math.washington.edu/svn/mpir/mpir/trunk/";
@@ -29,35 +29,60 @@
 
 // this will actually create both dll and lib
 dll_mpir_gc {
-    compiler: sdk7.1;
+    set: {
+        COMP="${COMP??vc10}";
+        PLAT="${PLAT??x86}";
+        BldConf="${BldConf??Debug}";
+    };
+    platform: "${PLAT}";
+    compiler: "${COMP}";
  
     targets: { 
         // libraries
-        "build.vc10\dll\Win32\Release\mpir.dll",
-        "build.vc10\dll\Win32\Release\mpir.lib",
+        "output\${COMP}\${PLAT}\${BldConf}\mpir.dll",
+        "output\${COMP}\${PLAT}\${BldConf}\mpir.lib",
 
         // API and symbols
-        "build.vc10\dll\Win32\Release\mpir.exp",
-        "build.vc10\dll\Win32\Release\mpir.pdb",
-        "build.vc10\dll\Win32\Release\config.h",
-        "build.vc10\dll\Win32\Release\gmp.h",
-        "build.vc10\dll\Win32\Release\mpir.h",
-        "build.vc10\dll\Win32\Release\gmp-mparam.h",
-        "build.vc10\dll\Win32\Release\gmpxx.h",
-        "build.vc10\dll\Win32\Release\mpirxx.h"
-} ;
-            // a comma seperated list of the binary files that are output             
+        //"build.vc10\dll\x64\Release\mpir.exp",
+        //"build.vc10\dll\x64\Release\mpir.pdb",
+        "output\include\config.h",
+        "output\include\gmp_${PLAT}.h",
+        "output\include\mpir_${PLAT}.h",
+        "output\include\gmp-mparam.h",
+        "output\include\gmpxx.h",
+        "output\include\mpirxx.h"
+    };    // a comma seperated list of the binary files that are output
  
     build-command: @"
 		if ""${BUILT}"" equ ""true"" goto end
-		msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=Win32;Configuration=Release
+		if ""${PLAT}"" equ ""x86"" (
+            msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=Win32;Configuration=${BldConf} || goto failed
+            set bldoutput=build.vc10\dll\Win32\${BldConf}
+        ) else (
+            msbuild build.vc10\mpir.sln /t:dll_mpir_gc /p:Platform=x64;Configuration=${BldConf} || goto failed
+            set bldoutput=build.vc10\dll\${PLAT}\${BldConf}
+        )
+        
+        mkdir output\${COMP}\${PLAT}\${BldConf}
+        mkdir output\include
+        copy /y %bldoutput%\*.dll output\${COMP}\${PLAT}\${BldConf}\
+        copy /y %bldoutput%\*.lib output\${COMP}\${PLAT}\${BldConf}\
+        copy /y %bldoutput%\*.h output\include\
+        del output\include\mpir_${PLAT}.h
+        del output\include\gmp_${PLAT}.h
+        ren output\include\mpir.h mpir_${PLAT}.h
+        ren output\include\gmp.h gmp_${PLAT}.h
 :end
 		";
             // you cannot build more than one config at one time, since config.h is generated
             // for each config
  
     clean-command: @"
+		if ""${PLAT}"" equ ""x86"" (
             msbuild build.vc10\mpir.sln /t:dll_mpir_gc:Clean; /p:Platform=Win32;Configuration=Release
+        ) else (
+            msbuild build.vc10\mpir.sln /t:dll_mpir_gc:Clean; /p:Platform=x64;Configuration=Release
+        )
             
             attrib -S -H -R *
             
@@ -68,16 +93,33 @@ dll_mpir_gc {
             del longlong.h 2>NUL 
             del mpir.h 2>NUL
             
-            rmdir /S /Q build.vc10\dll 2>NUL 
+		if ""${PLAT}"" equ ""x86"" (
             rmdir /S /Q build.vc10\Win32 2>NUL 
             rmdir /S /Q build.vc10\dll_mpir_gc\Win32\ 2>NUL 
+        ) else (
+            rmdir /S /Q build.vc10\x64 2>NUL 
+            rmdir /S /Q build.vc10\dll_mpir_gc\x64\ 2>NUL 
+        )
+
+            rmdir /S /Q build.vc10\dll 2>NUL 
             del build.vc10\mpir-tests\test-config.props 2>NUL 
             del build.vc10\output_params.bat 2>NUL
     "; 
 }
 
 release {
-	uses: dll_mpir_gc;
+    set: {
+        COMP="${COMP??vc10}";
+        PLAT="${PLAT??x86}";
+        BldConf="${BldConf??Debug}";
+    };
+	build-command: @"
+        for %%A in (${COMP}) do (
+            for %%B in (${PLAT}) do (
+                ptk --nologo dll_mpir_gc --COMP=%%A --PLAT=%%B || goto failed
+            )
+        )
+    ";
 }
 
 test {
@@ -89,15 +131,21 @@ package {
 
 	build-command: @"
         if ""${noversion}"" neq ""true"" ptk update-version
+        
+        REM Need to add a couple magic header files.
+        copy /y COPKG\*.h output\include\
+        
         cd COPKG
         autopackage mpir-dev-common.autopkg || goto failed
-        autopackage mpir.autopkg mpir-dev.autopkg || goto failed
+        for %%A in (${COMP}) do (
+            for %%B in (${PLAT}) do (
+                autopackage --comp=%%A --plat=%%B mpir.autopkg mpir-dev.autopkg || goto failed
+            )
+        )
 	";
 
 	targets: {
-		@"COPKG\mpir-dev-common-${NewVersion}-any.msi",
-		@"COPKG\mpir-dev[vc10]-${NewVersion}-x86.msi",
-		@"COPKG\mpir[vc10]-${NewVersion}-x86.msi",
+        (COMP,PLAT) => @"copkg\mpir-dev[${0}]-${NewVersion}-${1}.msi",
 	};
 
 	clean-command: @"

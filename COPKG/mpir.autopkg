@@ -59,7 +59,7 @@ assembly[mpir[${flavor}]] {
 }
 
 files[dlls] {
-    root: @"..\build.vc10\dll\Win32\Release";
+    root: @"..\output\${flavor}\${arch}\Release";
 
     include: {
         "mpir.dll",
