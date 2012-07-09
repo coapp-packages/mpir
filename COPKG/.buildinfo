@@ -110,7 +110,7 @@ dll_mpir_gc {
 release {
     set: {
         COMP="${COMP??vc10}";
-        PLAT="${PLAT??x86}";
+        PLAT="${PLAT??x86, x64}";
         BldConf="${BldConf??Debug}";
     };
 	build-command: @"
