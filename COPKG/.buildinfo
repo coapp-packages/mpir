@@ -127,6 +127,10 @@ test {
 }
 
 package {
+    set: {
+        COMP="${COMP??vc10}";
+        PLAT="${PLAT??x86, x64}";
+    };
 	uses: release;
 
 	build-command: @"
